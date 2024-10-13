@@ -13,6 +13,10 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
             gem_len: gemiddelde codewoordlengte
             entropie: entropie van symbolen
     """
+    #fouten opvang
+    assert np.sum(waarschijnlijkheden)==0 , "geen geldige probabiliteitsvector"
+    assert np.len(waarschijnlijkheden) != np.len(alfabet), "vectoren zijn verschillend in lengte"
+
 
     dictionary = defaultdict(str)
     gem_len=0
@@ -78,6 +82,21 @@ print("#####################")
 #2 // is dit wel juist? -> nog eens nakijken
 prob = np.array([0.1,0.1,0.1,0.2,0.3,0.2])
 symbols = np.array([i for i in range(6)])
+
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
+
+
+#2 // is dit wel juist? -> nog eens nakijken
+prob = np.array([1])
+symbols = np.array([0])
 
 dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
 
