@@ -59,7 +59,7 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
     for i in alfabet_pos:
         gem_len += len(dictionary[i]) * waarschijnlijkheden_pos[i]
 
-    return dictionary,gem_len,entropie
+    return dict(dictionary),gem_len,entropie
 
 
 

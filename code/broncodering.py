@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from collections import defaultdict
 
 def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
     """
@@ -12,14 +13,53 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
             gem_len: gemiddelde codewoordlengte
             entropie: entropie van symbolen
     """
-    dictionary={}
+    #fouten opvang
+    assert np.sum(waarschijnlijkheden)==1 , "geen geldige probabiliteitsvector"
+    assert len(waarschijnlijkheden) == len(alfabet), "vectoren zijn verschillend in lengte"
+
+
+    dictionary = defaultdict(str)
     gem_len=0
     entropie=0
 
+    #Uithalen van elementen met prob nul.
+    null_index = np.where(waarschijnlijkheden == 0)[0]
+    waarschijnlijkheden_pos = np.delete(waarschijnlijkheden,null_index)
+    alfabet_pos = np.delete(alfabet,null_index)
 
-   # voeg hier je code toe
+    #bepalen van entropy
+    entropie = np.sum(-1*waarschijnlijkheden_pos * np.log2(waarschijnlijkheden_pos))
 
-    return dictionary,gem_len,entropie
+    #aanmaken van dict met key: kansen, value: list van list van symbols. Symbols in één list zijn samengenomen.
+    prob_dict = defaultdict(list)
+    for i in range(len(waarschijnlijkheden_pos)):
+        prob_dict[waarschijnlijkheden_pos[i]] += [[alfabet_pos[i]]]
+
+    #Huffman toepassen tot er maar 1 prob overblijft / eerste prob = 1
+    while (prob_dict.get(1) == None):
+        lowest_prob1 = min(prob_dict.keys())
+        symbols1 = prob_dict[lowest_prob1].pop()
+        if (prob_dict[lowest_prob1] == []):
+            del prob_dict[lowest_prob1]
+        
+        lowest_prob2 = min(prob_dict.keys())
+        symbols2 = prob_dict[lowest_prob2].pop()
+        if (prob_dict[lowest_prob2] == []):
+            del prob_dict[lowest_prob2]
+
+        prob_dict[lowest_prob1+lowest_prob2] +=[symbols1+symbols2]
+
+        for i in symbols1:
+            dictionary[i] = "0" + dictionary[i]
+        
+        for i in symbols2:
+            dictionary[i] = "1" + dictionary[i]
+
+    # gemiddelde woordlengte
+    for i in alfabet_pos:
+        gem_len += len(dictionary[i]) * waarschijnlijkheden_pos[i]
+
+    return dict(dictionary),gem_len,entropie
 
 
 
@@ -38,5 +78,58 @@ def genereer_canonische_Huffman(code_lengtes, alfabet):
     # voeg hier je code toe
 
     return dictionary
+
+
+
+
+#####################################################################################
+#testcode voor maak_codetabel_Huffman
+#1
+prob = np.array([0.1,0.1,0.1,0.2,0.5])
+symbols = np.array([i for i in range(5)])
+
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
+
+
+#2 // is dit wel juist? -> nog eens nakijken
+prob = np.array([0.1,0.1,0.1,0.2,0.3,0.2])
+symbols = np.array([i for i in range(6)])
+
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
+
+
+#2 // is dit wel juist? -> nog eens nakijken
+prob = np.array([1])
+symbols = np.array([0])
+
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
+
+
+##########################################################
+#testcode voor genereer_canonische_Huffman
 
 
