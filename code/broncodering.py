@@ -128,6 +128,19 @@ for i in dic1.keys():
     print(i,dic1[i])
 print("#####################")
 
+#3
+prob = np.array([0.7 , 0.1 , 0.2 ])
+symbols = np.array([0, 1, 2])
+
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
 
 ##########################################################
 #testcode voor genereer_canonische_Huffman
