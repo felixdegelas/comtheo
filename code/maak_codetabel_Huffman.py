@@ -1,9 +1,6 @@
 import numpy as np
 import math
-
-rij1 = np.array([1,2])
-
-print(rij1+np.log2(rij1))
+from collections import defaultdict
 
 def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
     """
@@ -17,22 +14,51 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
             entropie: entropie van symbolen
     """
 
-
-
-
-
-    dictionary={}
+    dictionary = defaultdict(str)
     gem_len=0
     entropie=0
 
     #Uithalen van elementen met prob nul.
-    null_index = np.where(rij1 == 0)[0]
-    waarschijnlijkheden_pos = np.delete(waarschijnlijkheden_pos,null_index)
+    null_index = np.where(waarschijnlijkheden == 0)[0]
+    waarschijnlijkheden_pos = np.delete(waarschijnlijkheden,null_index)
     alfabet_pos = np.delete(alfabet,null_index)
 
     #bepalen van entropy
     entropie = -1*waarschijnlijkheden_pos * np.log2(waarschijnlijkheden_pos)
 
-    
+    #aanmaken van dict met key: kansen, value: list van list van symbols. Symbols in één list zijn samengenomen.
+    prob_dict = defaultdict(list)
+    for i in range(len(waarschijnlijkheden_pos)):
+        prob_dict[waarschijnlijkheden_pos[i]] += [[alfabet_pos[i]]]
+
+    #Huffman toepassen tot er maar 1 prob overblijft / eerste prob = 1
+    while (len(prob_dict) != 1):
+        lowest_prob1 = min(prob_dict.keys())
+        symbols1 = prob_dict[lowest_prob1].pop()
+        if (prob_dict[lowest_prob1] == []):
+            del prob_dict[lowest_prob1]
+        
+        lowest_prob2 = min(prob_dict.keys())
+        symbols2 = prob_dict[lowest_prob2].pop()
+        if (prob_dict[lowest_prob2] == []):
+            del prob_dict[lowest_prob2]
+
+        prob_dict[lowest_prob1+lowest_prob2] +=[symbols1+symbols2]
+
+        for i in symbols1:
+            dictionary[i] = "0" + dictionary[i]
+        
+        for i in symbols2:
+            dictionary[i] = "1" + dictionary[i]
 
     return dictionary,gem_len,entropie
+
+#testcode voor maak_codetabel_Huffman
+
+prob = np.array([0.1,0.1,0.1,0.2,0.5])
+symbols = np.array([i for i in range(5)])
+print(prob)
+print(symbols)
+
+dic,_,ent = maak_codetabel_Huffman(prob,symbols)
+print(dic)
