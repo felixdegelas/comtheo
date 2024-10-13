@@ -24,7 +24,7 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
     alfabet_pos = np.delete(alfabet,null_index)
 
     #bepalen van entropy
-    entropie = -1*waarschijnlijkheden_pos * np.log2(waarschijnlijkheden_pos)
+    entropie = np.sum(-1*waarschijnlijkheden_pos * np.log2(waarschijnlijkheden_pos))
 
     #aanmaken van dict met key: kansen, value: list van list van symbols. Symbols in één list zijn samengenomen.
     prob_dict = defaultdict(list)
@@ -32,7 +32,7 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
         prob_dict[waarschijnlijkheden_pos[i]] += [[alfabet_pos[i]]]
 
     #Huffman toepassen tot er maar 1 prob overblijft / eerste prob = 1
-    while (len(prob_dict) != 1):
+    while (prob_dict.get(1) == None):
         lowest_prob1 = min(prob_dict.keys())
         symbols1 = prob_dict[lowest_prob1].pop()
         if (prob_dict[lowest_prob1] == []):
@@ -51,14 +51,40 @@ def  maak_codetabel_Huffman(waarschijnlijkheden,alfabet):
         for i in symbols2:
             dictionary[i] = "1" + dictionary[i]
 
+    # gemiddelde woordlengte
+    for i in alfabet_pos:
+        gem_len += len(dictionary[i]) * waarschijnlijkheden_pos[i]
+
     return dictionary,gem_len,entropie
 
-#testcode voor maak_codetabel_Huffman
 
+
+#testcode voor maak_codetabel_Huffman
+#1
 prob = np.array([0.1,0.1,0.1,0.2,0.5])
 symbols = np.array([i for i in range(5)])
-print(prob)
-print(symbols)
 
-dic,_,ent = maak_codetabel_Huffman(prob,symbols)
-print(dic)
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
+
+
+#2 // is dit wel juist? -> nog eens nakijken
+prob = np.array([0.1,0.1,0.1,0.2,0.3,0.2])
+symbols = np.array([i for i in range(6)])
+
+dic1,gem_len1,entropie1 = maak_codetabel_Huffman(prob,symbols)
+
+print("probvec: ",prob)
+print("symbvec: ",symbols)
+print(gem_len1)
+print(entropie1)
+for i in dic1.keys():
+    print(i,dic1[i])
+print("#####################")
